@@ -14,6 +14,7 @@ Application for Creighton model
     docker-compose run --rm app sh
     docker-compose run --rm app sh -c <command>
     docker-compose up
+    docker-compose build
 
 ### Django commands
 
