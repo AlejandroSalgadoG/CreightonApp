@@ -23,3 +23,5 @@ Application for Creighton model
     docker-compose run --rm app sh -c flake8
     docker-compose run --rm app sh -c "python manage.py startapp <name>"
     docker-compose run --rm app sh -c "python manage.py wait_for_db"
+    docker-compose run --rm app sh -c "python manage.py migrate"
+    docker-compose run --rm app sh -c "python manage.py makemigrations"
