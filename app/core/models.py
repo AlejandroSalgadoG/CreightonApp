@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.db import models
 from django.contrib.auth.models import (
     AbstractBaseUser,
@@ -39,3 +40,52 @@ class User(AbstractBaseUser, PermissionsMixin):
     objects = UserManager()
 
     USERNAME_FIELD = "email"
+
+
+class Observation(models.Model):
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+    )
+    date = models.DateField()
+    observation = models.CharField(
+        max_length=255,
+        choices=[
+            ("H", "H - flujo abundante"),
+            ("M", "M - flujo moderado"),
+            ("L", "L - flujo ligero"),
+            ("VL", "VL - flujo muy ligero"),
+            ("B", "B - sangrado cafe/marron/negro"),
+            ("0", "0 - seco"),
+            ("2", "2 - humedo sin lubricacion"),
+            ("2W", "2W - mojado sin lubricacion"),
+            ("4", "4 - brillo sin lubricacion"),
+            ("6", "6 - pegajoso (0.5 cm | 1/4 inch)"),
+            ("8", "8 - ligoso (1-2 cm | 1/2 - 3/4 inch)"),
+            ("10", "10 - elastico (2.5 cm | 1 inch)"),
+            ("10DL", "10DL - humedo con lubricacion"),
+            ("10SL", "10SL - brillo con lubricacion"),
+            ("10WL", "10WL - mojado con lubricacion"),
+        ],
+    )
+    code = models.CharField(
+        max_length=255,
+        choices=[
+            ("B", "B - sangrado cafe/marron/negro"),
+            ("C", "C - nublado (blanco)"),
+            ("K", "K - transparente"),
+            ("L", "L - lubricante"),
+            ("P", "P - pastoso (cremoso)"),
+            ("R", "R - rojo"),
+            ("Y", "Y - amarillo (aun muy palido)"),
+        ],
+    )
+    frequency = models.CharField(
+        max_length=255,
+        choices=[
+            ("x1", "x1 - una vez al dia"),
+            ("x2", "x2 - dos veces al dia"),
+            ("x3", "x3 - tres veces al dia"),
+            ("AD", "AD - a lo largo del dia"),
+        ],
+    )
