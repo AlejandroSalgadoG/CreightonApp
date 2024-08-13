@@ -1,3 +1,9 @@
-from django.shortcuts import render
+from django.http import HttpResponse
 
-# Create your views here.
+from visualization.image.graph import Graph
+
+def index(request):
+    graph = Graph()
+    image = graph.build()
+    image.save("output.jpg")
+    return HttpResponse("image generated")
