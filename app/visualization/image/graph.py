@@ -1,13 +1,14 @@
 from PIL import Image
 
+from visualization.image.config import GraphConfig
 from visualization.image.grid import Grid
 
 
 class Graph:
-    def __init__(self):
-        self.vertical_margin = 50
-        self.horizontal_margin = 50
-        self.grid = Grid()
+    def __init__(self, config: GraphConfig):
+        self.vertical_margin = config.vertical_margin
+        self.horizontal_margin = config.horizontal_margin
+        self.grid = Grid(config)
 
     def build(self) -> Image:
         grid_image = self.grid.build()

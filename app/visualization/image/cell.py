@@ -1,5 +1,7 @@
 from PIL import Image, ImageDraw
 
+from visualization.image.config import GraphConfig
+
 
 def write(image: Image, msg: str, font_size: int = 14) -> Image:
     width, height = image.size
@@ -10,7 +12,7 @@ def write(image: Image, msg: str, font_size: int = 14) -> Image:
 
 
 class Cell:
-    def __init__(self, pos: int, width: int = 50, height: int = 70):
+    def __init__(self, pos: int, width: int, height: int):
         self.pos = pos
         self.width = width
         self.height = height
@@ -22,9 +24,9 @@ class Cell:
 
 
 class TitleCell(Cell):
-    def __init__(self, pos: int):
-        super().__init__(pos, height=50)
-        self.font_size = 14
+    def __init__(self, config: GraphConfig, pos: int):
+        super().__init__(pos, width=config.cell_width, height=config.title_cell_height)
+        self.font_size = config.title_font_size
         self.id = str(self.pos+1)
 
     def build(self) -> Image:
@@ -34,8 +36,10 @@ class TitleCell(Cell):
 
 
 class TagCell(Cell):
-    pass
+    def __init__(self, config: GraphConfig, pos: int):
+        super().__init__(pos, width=config.cell_width, height=config.tag_cell_height)
 
 
 class AnnotationCell(Cell):
-    pass
+    def __init__(self, config: GraphConfig, pos: int):
+        super().__init__(pos, width=config.cell_width, height=config.annotation_cell_height)

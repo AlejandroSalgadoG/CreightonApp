@@ -1,16 +1,17 @@
 from PIL import Image
 from abc import abstractmethod, ABC
 
+from visualization.image.config import GraphConfig
 from visualization.image.cell import AnnotationCell, Cell, TitleCell, TagCell
 
 
 class Row(ABC):
-    def __init__(self):
-        self.width = 35
-        self.cells = [self.build_cell(pos) for pos in range(self.width)]
+    def __init__(self, config: GraphConfig):
+        self.width = config.row_width
+        self.cells = [self.build_cell(config, pos) for pos in range(self.width)]
 
     @abstractmethod
-    def build_cell(self, pos: int) -> Cell:
+    def build_cell(self, config: GraphConfig, pos: int) -> Cell:
         pass
 
     def build(self) -> Image:
@@ -31,15 +32,15 @@ class Row(ABC):
 
 
 class TitleRow(Row):
-    def build_cell(self, pos: int) -> Cell:
-        return TitleCell(pos)
+    def build_cell(self, config: GraphConfig, pos: int) -> Cell:
+        return TitleCell(config, pos)
 
 
 class ObservationRow:
-    def __init__(self, pos: int):
+    def __init__(self, config: GraphConfig, pos: int):
         self.pos = pos
-        self.tag_row = TagRow()
-        self.annotation_row = AnnotationRow()
+        self.tag_row = TagRow(config)
+        self.annotation_row = AnnotationRow(config)
 
     def build(self) -> Image:
         tag_row = self.tag_row.build()
@@ -57,10 +58,10 @@ class ObservationRow:
 
 
 class TagRow(Row):
-    def build_cell(self, pos: int) -> Cell:
-        return TagCell(pos)
+    def build_cell(self, config: GraphConfig, pos: int) -> Cell:
+        return TagCell(config, pos)
 
 
 class AnnotationRow(Row):
-    def build_cell(self, pos: int) -> Cell:
-        return AnnotationCell(pos)
+    def build_cell(self, config: GraphConfig, pos: int) -> Cell:
+        return AnnotationCell(config, pos)

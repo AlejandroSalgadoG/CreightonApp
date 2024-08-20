@@ -1,13 +1,14 @@
 from PIL import Image
 
+from visualization.image.config import GraphConfig
 from visualization.image.row import ObservationRow, TitleRow
 
 
 class Grid:
-    def __init__(self):
-        self.height = 6
-        self.title_row = TitleRow()
-        self.rows = [ObservationRow(pos) for pos in range(self.height)]
+    def __init__(self, config: GraphConfig):
+        self.height = config.grid_height
+        self.title_row = TitleRow(config)
+        self.rows = [ObservationRow(config, pos) for pos in range(self.height)]
 
     def build(self) -> Image:
         title_row = self.title_row.build()
