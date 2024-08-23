@@ -1,15 +1,16 @@
 from PIL import Image
 from abc import ABC
 
+from visualization.image.observation import Observation
 from visualization.image.config import GraphConfig
-from visualization.image.cell import Cell, ObservationCell, TitleCell
+from visualization.image.cell import ObservationCell, TitleCell
 
 
 class Row(ABC):
     def __init__(self, config: GraphConfig):
         self.width = config.row_width
 
-    def paint_cells(self, cells: list[Cell]) -> Image:
+    def paint_cells(self, cells: list[Image]) -> Image:
         widths = [cell.size[0] for cell in cells]
 
         width, height = cells[0].size
@@ -40,5 +41,5 @@ class ObservationRow(Row):
         self.pos = pos
         self.cells = [ObservationCell(config, pos) for pos in range(self.width)]
 
-    def build(self) -> Image:
-        return self.paint_cells([cell.build() for cell in self.cells])
+    def build(self, observations: list[Observation]) -> Image:
+        return self.paint_cells([cell.build(observations) for cell in self.cells])

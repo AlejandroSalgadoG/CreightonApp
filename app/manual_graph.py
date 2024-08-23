@@ -33,7 +33,8 @@ def get_observations() -> list[Observation]:
 
 
 if __name__ == "__main__":
+    observations = get_observations()
     config = GraphConfig()
     graph = Graph(config)
-    image = graph.build()
+    image = graph.build(observations)
     image.show()
