@@ -35,11 +35,29 @@ class TitleCell(Cell):
         return image
 
 
+class ObservationCell:
+    def __init__(self, config: GraphConfig, pos: int):
+        self.tag_cell = TagCell(config, pos)
+        self.annotation_cell = AnnotationCell(config, pos)
+
+    def build(self) -> Image:
+        tag_image = self.tag_cell.build()
+        annotation_image = self.annotation_cell.build()
+
+        width, height = tag_image.size
+        image = Image.new('RGB', (width, height*2))
+
+        image.paste(tag_image, (0, 0))
+        image.paste(annotation_image, (0, height))
+
+        return image
+
+
 class TagCell(Cell):
     def __init__(self, config: GraphConfig, pos: int):
-        super().__init__(pos, width=config.cell_width, height=config.tag_cell_height)
+        super().__init__(pos, width=config.cell_width, height=config.observation_cell_height)
 
 
 class AnnotationCell(Cell):
     def __init__(self, config: GraphConfig, pos: int):
-        super().__init__(pos, width=config.cell_width, height=config.annotation_cell_height)
+        super().__init__(pos, width=config.cell_width, height=config.observation_cell_height)

@@ -1,21 +1,15 @@
 from PIL import Image
-from abc import abstractmethod, ABC
+from abc import ABC
 
 from visualization.image.config import GraphConfig
-from visualization.image.cell import AnnotationCell, Cell, TitleCell, TagCell
+from visualization.image.cell import Cell, ObservationCell, TitleCell
 
 
 class Row(ABC):
     def __init__(self, config: GraphConfig):
         self.width = config.row_width
-        self.cells = [self.build_cell(config, pos) for pos in range(self.width)]
 
-    @abstractmethod
-    def build_cell(self, config: GraphConfig, pos: int) -> Cell:
-        pass
-
-    def build(self) -> Image:
-        cells = [cell.build() for cell in self.cells]
+    def paint_cells(self, cells: list[Cell]) -> Image:
         widths = [cell.size[0] for cell in cells]
 
         width, height = cells[0].size
@@ -32,36 +26,19 @@ class Row(ABC):
 
 
 class TitleRow(Row):
-    def build_cell(self, config: GraphConfig, pos: int) -> Cell:
-        return TitleCell(config, pos)
-
-
-class ObservationRow:
-    def __init__(self, config: GraphConfig, pos: int):
-        self.pos = pos
-        self.tag_row = TagRow(config)
-        self.annotation_row = AnnotationRow(config)
+    def __init__(self, config: GraphConfig):
+        super().__init__(config)
+        self.cells = [TitleCell(config, pos) for pos in range(self.width)]
 
     def build(self) -> Image:
-        tag_row = self.tag_row.build()
-        annotation_row = self.annotation_row.build()
-
-        width, height = tag_row.size
-        _, height_annotation = annotation_row.size
-
-        image = Image.new('RGB', (width, height + height_annotation))
-
-        image.paste(tag_row, (0, 0))
-        image.paste(annotation_row, (0, height))
-
-        return image
+        return self.paint_cells([cell.build() for cell in self.cells])
 
 
-class TagRow(Row):
-    def build_cell(self, config: GraphConfig, pos: int) -> Cell:
-        return TagCell(config, pos)
+class ObservationRow(Row):
+    def __init__(self, config: GraphConfig, pos: int):
+        super().__init__(config)
+        self.pos = pos
+        self.cells = [ObservationCell(config, pos) for pos in range(self.width)]
 
-
-class AnnotationRow(Row):
-    def build_cell(self, config: GraphConfig, pos: int) -> Cell:
-        return AnnotationCell(config, pos)
+    def build(self) -> Image:
+        return self.paint_cells([cell.build() for cell in self.cells])

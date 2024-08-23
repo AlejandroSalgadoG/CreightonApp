@@ -10,7 +10,6 @@ class GraphConfig:
     cell_width: int = 50
     title_font_size: int = 14
     title_cell_height: int = 50
-    tag_cell_height: int = 70
-    annotation_cell_height: int = 70
+    observation_cell_height: int = 70
 
 
