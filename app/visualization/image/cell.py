@@ -1,16 +1,9 @@
-from PIL import Image, ImageDraw
+from PIL import Image
 from typing import Optional
 
+from visualization.image.modificators import AnnotationModificator, TagModificator, TitleModificator
 from visualization.image.observation import Observation
 from visualization.image.config import GraphConfig
-
-
-def write(image: Image, msg: str, font_size: int = 14) -> Image:
-    width, height = image.size
-    draw = ImageDraw.Draw(image)
-    _, _, w, h = draw.textbbox((0, 0), msg, font_size=font_size)
-    draw.text(((width-w)/2, (height-h)/2), msg, font_size=font_size, fill="black")
-    return image
 
 
 class Cell:
@@ -19,10 +12,8 @@ class Cell:
         self.width = width
         self.height = height
 
-    def build_empty(self, color="white") -> Image:
-        image = Image.new('RGB', (self.width, self.height))
-        ImageDraw.Draw(image).rectangle([0, 0, self.width, self.height], fill=color, outline="black", width=2)
-        return image
+    def build_img(self) -> Image:
+        return Image.new('RGB', (self.width, self.height))
 
 
 class TitleCell(Cell):
@@ -32,9 +23,7 @@ class TitleCell(Cell):
         self.id = str(self.pos+1)
 
     def build(self) -> Image:
-        image = super().build_empty()
-        write(image, self.id, self.font_size)
-        return image
+        return TitleModificator(self.build_img(), self.font_size).write_id(self.id)
 
 
 class ObservationCell:
@@ -62,17 +51,15 @@ class TagCell(Cell):
         super().__init__(pos, width=config.cell_width, height=config.observation_cell_height)
 
     def build(self, observation: Optional[Observation]) -> Image:
-        if not observation:
-            return super().build_empty()
-        return super().build_empty(color=observation.color)
+        modificator = TagModificator(self.build_img())
+        return modificator.draw_cell("white") if not observation else modificator.write_tag(observation)
 
 
 class AnnotationCell(Cell):
     def __init__(self, config: GraphConfig, pos: int):
         super().__init__(pos, width=config.cell_width, height=config.observation_cell_height)
+        self.font_size = config.annotation_font_size
 
     def build(self, observation: Optional[Observation]) -> Image:
-        image = super().build_empty()
-        if not observation:
-            return image
-        return write(image, observation.frequency, 14)
+        modificator = AnnotationModificator(self.build_img(), self.font_size)
+        return modificator.draw_cell("white") if not observation else modificator.write_annotation(observation)
